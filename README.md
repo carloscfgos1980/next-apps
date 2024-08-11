@@ -873,3 +873,175 @@ https://www.youtube.com/watch?v=7HrOjvKIfRs&list=PLC3y8-rFHvwjOKd6gdf4QtV1uYNiQn
 # Lesson 31. Intercepting Routes
 
 https://www.youtube.com/watch?v=nr_kRfTJfKc&list=PLC3y8-rFHvwjOKd6gdf4QtV1uYNiQnruI&index=31
+
+- <Intercepting Routes> allow you to intercept or stop the default route behaviour to present an alternative view or component when navigating through the UI, while still preserving the intended route scenarios like page reload
+- This can be useful if you want to show a route while keeping the content of current page
+- Check <Intercepting loading> diagram
+- Check <intercepting-fotos> diagram
+
+<ntercepting Routes Conventions:>
+- (.) to match segments at the same level
+- (..) to match segments one level up level
+- (..)(..) to match segments two levels up level: There is a issue with this convention and it does not quite work
+- (...) to match segments from the root app directory
+
+**important**
+
+- Snippet to create a component: type: napage
+
+This intercepting thing is not working... I don't think it is so important... it is in folde f1
+
+# Lesson 32. Parallel Intercepting Routes
+
+https://www.youtube.com/watch?v=mVOvx9eVHg0&list=PLC3y8-rFHvwjOKd6gdf4QtV1uYNiQnruI&index=32
+
+This is an example of Parallel Intercepting Routes, it has a lot of code that I just copied from the <gopinav> repository:
+
+https://github.com/gopinav/Next.js-14-Tutorials
+
+# Lesson 33. Route Handlers
+
+https://www.youtube.com/watch?v=25yY2RVRq_M&list=PLC3y8-rFHvwjOKd6gdf4QtV1uYNiQnruI&index=33
+
+- We can create custom request handlers for our routes using a feature called <Route Handlers>
+- Unlike page routes, which respond with HTML content, route handlers allow you to create RESTful endpoints, giving you full control over the response
+- There is no overhead of having to create and configure a separate server
+- Route Handlers are great for making an external API request
+- Route Handlers run server-side, ensuring that sensitive information like private key remains secure and never gets shipped to the browser
+- Route Handlers are the equivalent of API routes in a Page router
+
+**important**
+From now on, we are working in route-handler-demo app
+
+1. Create firs route: <hello> folder/page.tsx:
+
+export async function GET(){
+return new Response("Hello World!")
+}
+
+2. Index route for organization.
+   src/dashboard/page.tsx:
+   export async function GET(){
+   return new Response("Dashboard data")
+   }
+
+src/dashboard/users/page.tsx:
+export async function GET(){
+return new Response("Users data")
+}
+
+# Lesson 34. Handling GET Request
+
+https://www.youtube.com/watch?v=b3ue9WL5fk8&list=PLC3y8-rFHvwjOKd6gdf4QtV1uYNiQnruI&index=34
+
+I copied the file from the repository with is more complex to this lesson. Code is in src/comments/route.ts and src/comments/data.ts
+src/comments/route.ts => contains the GET route:
+import { comments } from "./data";
+
+export async function GET() {
+return Response.json(comments);
+
+}
+
+src/comments/data.ts data to be fetched:
+export const comments = [
+{
+id: 1,
+text: "This is the first comment",
+},
+{
+id: 2,
+text: "This is the second comment",
+},
+{
+id: 3,
+text: "This is the third comment",
+},
+];
+
+URL:
+http://localhost:3000/comments
+
+# Lesson 35. Handling POST Request
+
+https://www.youtube.com/watch?v=pzPS7Fn-8tE&list=PLC3y8-rFHvwjOKd6gdf4QtV1uYNiQnruI&index=35
+
+src/app/comments/route.ts
+export async function POST(request: Request) {
+const comment = await request.json();
+const newComment = {
+id: comments.length + 1,
+text: comment.text
+};
+comments.push(newComment);
+return new Response(JSON.stringify(newComment), {
+headers: { "Content-Type": "application/json" },
+status: 201,
+});
+}
+
+# Lesson 36. Dynamic Route Handlers. Get a single comment
+
+https://www.youtube.com/watch?v=TGbC8F0gjC8&list=PLC3y8-rFHvwjOKd6gdf4QtV1uYNiQnruI&index=36
+
+1. src/app/comments => Create a folder for the id. It is similar that dynamic page routes: [id]
+
+src/app/comments/[id]. Create a route file: route.ts:
+import { comments } from "../data";
+
+export async function GET(
+\_request: Request,
+{params}:{
+params:{
+id:string
+}
+}) {
+const comment = comments.find(comment => comment.id === parseInt(params.id))
+return Response.json(comment);
+
+}
+
+- This function has to arguments: request, context
+  context = params
+
+\_request => underscore when the argument is not at use
+
+# Lesson 37. Handling PATCH Request
+
+https://www.youtube.com/watch?v=bDbBh7lEamE&list=PLC3y8-rFHvwjOKd6gdf4QtV1uYNiQnruI&index=37
+
+src/app/comments/[id]/route.ts:
+
+export async function PATCH(
+request: Request,
+{ params }: { params: { id: string } }
+) {
+const body = await request.json();
+const { text } = body;
+
+const index = comments.findIndex(
+(comment) => comment.id === parseInt(params.id)
+);
+comments[index].text = text;
+return Response.json(comments[index]);
+}
+
+# Lesson 38. Handling DELETE Request
+
+https://www.youtube.com/watch?v=x3KCt1Oc278&list=PLC3y8-rFHvwjOKd6gdf4QtV1uYNiQnruI&index=38
+
+src/app/comments/[id]/route.ts
+
+export async function DELETE(
+\_request: Request,
+{ params }: { params: { id: string } }
+) {
+const index = comments.findIndex(
+(comment) => comment.id === parseInt(params.id)
+);
+const deletedComment = comments[index];
+comments.splice(index, 1);
+return Response.json(deletedComment);
+}
+
+I have never used slice method, neverthless is very straight forward and easiest that the method I used before to delete a object from the array of data, before I loop the array and mismatch the object (item) I wanted to delete... nevertheless this is not really important since the delete process is done by the databas in the real world app
