@@ -67,11 +67,3 @@ https://www.youtube.com/watch?v=x7oQC_R_yVo&list=PLC3y8-rFHvwjOKd6gdf4QtV1uYNiQn
 <Client components:>
 - To create a Client component, it's necessary to add "use client" at the top of the component file
 - Client component can't performance tasks like reading files, but they have the ability to use hooks and manage interactions
-
-# Lesson 5. Routing
-
-https://www.youtube.com/watch?v=Vm7qM1wmXwE&list=PLC3y8-rFHvwjOKd6gdf4QtV1uYNiQnruI&index=5
-
-= Nextjs has a fyle system based using routing mechnism
-
-- URL paths that users can access in the browser are defined by files and folders in your codebase
